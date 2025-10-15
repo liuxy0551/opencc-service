@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8" />
+        <title>OpenCC 简繁转换</title>
+        <style>
+            body {
+                font-family: "PingFang SC", "Microsoft YaHei", system-ui;
+                background-color: #f7f9fc;
+                margin: 0;
+                padding: 0;
+                color: #333;
+            }
+            header {
+                background-color: #4a90e2;
+                color: #fff;
+                padding: 1.5rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            header h1 {
+                margin: 0;
+                font-size: 1.5rem;
+            }
+            header a {
+                color: #fff;
+                text-decoration: none;
+                margin-left: 1rem;
+            }
+            header a:hover {
+                text-decoration: underline;
+            }
+            main {
+                max-width: 900px;
+                margin: 2rem auto;
+                padding: 0 1rem;
+            }
+            .card {
+                background: #fff;
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+                border-radius: 10px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            }
+            textarea,
+            select,
+            button {
+                width: 100%;
+                font-size: 16px;
+                padding: 8px;
+                margin-top: 8px;
+                border-radius: 6px;
+                border: 1px solid #ccc;
+            }
+            textarea {
+                width: 100%;
+                height: 160px;
+                padding: 8px;
+                font-size: 16px;
+            }
+            button {
+                cursor: pointer;
+                background-color: #4a90e2;
+                color: #fff;
+                border: none;
+                transition: background-color 0.2s;
+            }
+            button:hover {
+                background-color: #357ab8;
+            }
+            table {
+                border-collapse: collapse;
+                width: 100%;
+                margin-top: 1rem;
+                border: 1px solid #ccc;
+            }
+            th,
+            td {
+                border: 1px solid #ddd;
+                padding: 8px;
+                vertical-align: top;
+            }
+            th {
+                background: #f5f5f5;
+            }
+            tr:nth-child(even) {
+                background: #fafafa;
+            }
+            .top-buttons {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 8px;
+            }
+            footer {
+                text-align: center;
+                padding: 1.5rem;
+                font-size: 14px;
+                color: #666;
+            }
+            footer a {
+                color: #4a90e2;
+                text-decoration: none;
+            }
+            footer a:hover {
+                text-decoration: underline;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <a href="/"><h1>OpenCC 简繁转换</h1></a>
+            <div>
+                <a href="/">🏠 首页</a>
+                <a href="https://github.com/liuxy0551/opencc-service" target="_blank">GitHub</a>
+            </div>
+        </header>
+
+        <main>
+            <div class="card">
+                <h2>文本转换</h2>
+                <div class="top-buttons">
+                    <button id="convertBtn">转换</button>
+                </div>
+                <textarea id="input" placeholder="请输入文本"></textarea>
+                <label for="mode">选择转换模式：</label>
+                <select id="mode">
+                    <option value="s2t">简体 → 通用繁体</option>
+                    <option value="t2s">通用繁体 → 简体</option>
+                    <option value="s2tw">简体 → 台湾正体</option>
+                    <option value="s2hk">简体 → 香港繁体</option>
+                </select>
+                <div id="result"></div>
+            </div>
+        </main>
+
+        <footer>
+            <p>
+                📦 GitHub:
+                <a href="https://github.com/liuxy0551/opencc-service" target="_blank">liuxy0551/opencc-service</a>
+            </p>
+            <p>🌐 在线部署: <a href="https://opencc.liuxianyu.cn" target="_blank">https://opencc.liuxianyu.cn</a></p>
+        </footer>
+
+        <script>
+            const textarea = document.getElementById("input");
+            const convertBtn = document.getElementById("convertBtn");
+
+            // Command/Ctrl+Enter 快捷键
+            textarea.addEventListener("keydown", function (e) {
+                if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+                    e.preventDefault();
+                    convertBtn.click();
+                }
+            });
+
+            async function convertText() {
+                const text = textarea.value.trim();
+                const mode = document.getElementById("mode").value;
+                if (!text) return alert("请输入文本");
+
+                const res = await fetch("/convert", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ text, mode }),
+                });
+                const data = await res.json();
+                if (data.error) return alert("错误：" + data.error);
+
+                document.getElementById("result").innerHTML = `
+        <table>
+          <tr><th>模式</th><th>输入</th><th>输出</th></tr>
+          <tr>
+            <td>${mode}</td>
+            <td>${data.input}</td>
+            <td>${data.output}</td>
+          </tr>
+        </table>
+      `;
+            }
+
+            convertBtn.addEventListener("click", convertText);
+        </script>
+    </body>
+</html>

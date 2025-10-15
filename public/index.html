@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8" />
+        <title>OpenCC 汉字简繁转换服务</title>
+        <style>
+            body {
+                font-family: "PingFang SC", "Microsoft YaHei", system-ui;
+                background-color: #f7f9fc;
+                margin: 0;
+                padding: 0;
+                color: #333;
+            }
+            header {
+                background-color: #4a90e2;
+                color: #fff;
+                padding: 2rem;
+                text-align: center;
+            }
+            header h1 {
+                margin: 0;
+                font-size: 2rem;
+            }
+            main {
+                max-width: 900px;
+                margin: 2rem auto;
+                padding: 0 1rem;
+            }
+            .card {
+                background: #fff;
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+                border-radius: 10px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            }
+            h2,
+            h3 {
+                margin-top: 0;
+            }
+            a.button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0.5rem 0;
+                border-radius: 6px;
+                background-color: #4a90e2;
+                color: #fff;
+                text-decoration: none;
+                transition: background-color 0.2s;
+            }
+            a.button:hover {
+                background-color: #357ab8;
+            }
+            pre {
+                background: #f5f5f5;
+                padding: 12px;
+                overflow-x: auto;
+                border-radius: 6px;
+            }
+            code {
+                font-family: monospace;
+                font-size: 14px;
+            }
+            ul {
+                padding-left: 1rem;
+            }
+            li {
+                margin: 0.5rem 0;
+            }
+            .endpoint {
+                margin-top: 1rem;
+                border-left: 4px solid #4a90e2;
+                padding-left: 1rem;
+            }
+            footer {
+                text-align: center;
+                padding: 1.5rem;
+                font-size: 14px;
+                color: #666;
+            }
+            footer a {
+                color: #4a90e2;
+                text-decoration: none;
+            }
+            footer a:hover {
+                text-decoration: underline;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>OpenCC 汉字简繁转换服务</h1>
+            <p>简体、繁体、台湾正体、香港繁体在线转换与对比</p>
+        </header>
+
+        <main>
+            <div class="card">
+                <h2>网页功能</h2>
+                <a class="button" href="/convert.html">🔄 简繁转换页面</a>
+                <a class="button" href="/compare.html">🈶 简繁对比页面</a>
+            </div>
+
+            <div class="card">
+                <h2>接口说明</h2>
+
+                <div class="endpoint">
+                    <h3>1. POST /convert</h3>
+                    <p>将文本按指定模式进行转换</p>
+                    <strong>请求体 JSON 示例：</strong>
+                    <pre><code>{
+  "text": "汉字转换测试",
+  "mode": "s2t"
+}</code></pre>
+                    <p>mode 可选值：</p>
+                    <ul>
+                        <li>"s2t"：简体 → 通用繁体</li>
+                        <li>"t2s"：通用繁体 → 简体</li>
+                        <li>"s2tw"：简体 → 台湾正体</li>
+                        <li>"s2hk"：简体 → 香港繁体</li>
+                    </ul>
+                    <strong>响应示例：</strong>
+                    <pre><code>{
+  "input": "汉字转换测试",
+  "output": "漢字轉換測試"
+}</code></pre>
+                    <strong>curl 示例：</strong>
+                    <pre><code>curl -X POST https://opencc.liuxianyu.cn/convert \
+  -H "Content-Type: application/json" \
+  -d '{"text":"汉字转换测试","mode":"s2t"}'</code></pre>
+                </div>
+
+                <div class="endpoint">
+                    <h3>2. POST /compare</h3>
+                    <p>将简体文本转换成三种繁体版本进行对比</p>
+                    <strong>请求体 JSON 示例：</strong>
+                    <pre><code>{
+  "text": "汉字转换测试"
+}</code></pre>
+                    <strong>响应示例：</strong>
+                    <pre><code>{
+  "result": {
+    "input": "汉字转换测试",
+    "traditional": "漢字轉換測試",
+    "taiwan": "漢字轉換測試",
+    "hongkong": "漢字轉換測試"
+  }
+}</code></pre>
+                    <strong>curl 示例：</strong>
+                    <pre><code>curl -X POST https://opencc.liuxianyu.cn/compare \
+  -H "Content-Type: application/json" \
+  -d '{"text":"汉字转换测试"}'</code></pre>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>
+                📦 GitHub:
+                <a href="https://github.com/liuxy0551/opencc-service" target="_blank">liuxy0551/opencc-service</a>
+            </p>
+            <p>🌐 在线部署: <a href="https://opencc.liuxianyu.cn" target="_blank">https://opencc.liuxianyu.cn</a></p>
+        </footer>
+    </body>
+</html>
